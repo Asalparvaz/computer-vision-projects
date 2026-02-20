@@ -45,8 +45,10 @@ pip install -r requirements.txt
 
 Run:
 ```
-python main.py
+python src/main.py
 ```
+
+press `q` to exit.
 
 ## 💡 Possible Improvements
 
