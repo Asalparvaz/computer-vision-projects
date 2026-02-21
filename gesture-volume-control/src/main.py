@@ -1,7 +1,7 @@
 #TODAY'S TO-DO (mute option):
-# 1. first fist -> mutes -> you can't do anything -> second fist -> unmute
-# 2. track last volume, when it unmutes it goes to that
-# 3. display when muted
+# 1. first fist -> mutes -> you can't do anything -> second fist -> unmute ✅
+# 2. track last volume, when it unmutes it goes to that ✅
+# 3. display when muted (🎯 Display volume + icon)
 
 import cv2
 import numpy as np
@@ -30,7 +30,16 @@ minVol = volRange[0]
 maxVol = volRange[1]
 
 muted = False
+fist_seen_prev = False
+fist_cooldown = False
+cooldown_frames = 20
+frame_counter = 0
 
+just_unmuted = False
+unmute_delay_cooldown = 10
+unmute_frame_counter = 0
+
+last_volume = 0
 
 color = (77, 77, 77)
 
@@ -48,14 +57,37 @@ while True:
         is_fist = detector.is_fist(lmList, handType=handType)
 
 
-        if is_fist: # Simple concept 
-            muted=True
-            volume.SetMasterVolumeLevel(minVol, None)
-            print("Muted!")
-        else :
-            muted=False
+        if is_fist and not fist_seen_prev and not fist_cooldown:
+            if muted:
+                muted=False
+                just_unmuted = True
+                volume.SetMasterVolumeLevel(last_volume, None)
+                print("Unmuted!")
+            else:
+                muted = True
+                just_unmuted = False
+                last_volume = volume.GetMasterVolumeLevel()
+                volume.SetMasterVolumeLevel(minVol, None)
+                print("Muted!")
+            fist_cooldown = True
+            frame_counter = 0
+            unmute_frame_counter = 0
 
-        if not muted:
+
+        fist_seen_prev = is_fist
+
+        if fist_cooldown:
+            frame_counter+=1
+            if frame_counter > cooldown_frames:
+                fist_cooldown = False
+
+        if just_unmuted:
+            unmute_frame_counter+=1
+            if unmute_frame_counter > unmute_delay_cooldown:
+                just_unmuted = False
+
+
+        if not muted and not just_unmuted:
             x1, y1 = lmList[4][1], lmList[4][2]
             x2, y2 = lmList[8][1], lmList[8][2]
             cx, cy = (x1+x2) // 2 , (y1+y2) // 2
@@ -88,9 +120,9 @@ while True:
 
 
     cv2.imshow("Volume Control", img)
-    cv2.waitKey(1)
+    key = cv2.waitKey(1) & 0xFF
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if key == ord('q'):
         break
 
 cap.release()
