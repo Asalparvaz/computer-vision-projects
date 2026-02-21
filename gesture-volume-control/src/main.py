@@ -1,13 +1,9 @@
-#TODAY'S TO-DO (mute option):
-# 1. first fist -> mutes -> you can't do anything -> second fist -> unmute ✅
-# 2. track last volume, when it unmutes it goes to that ✅
-# 3. display when muted (🎯 Display volume + icon)
-
 import cv2
 import numpy as np
 import math
 
 import hand_tracker_module as htm
+from ui import draw_ui
 
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
@@ -110,14 +106,9 @@ while True:
             else:
                 color = (77, 77, 77)
 
-            cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
-
-            display_x = cx
-            display_y = cy
-
-            cv2.putText(img, f"{int(vol_percentage)}%", (display_x, display_y),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
-
+    current_vol = volume.GetMasterVolumeLevel()
+    vol_percentage = np.interp(current_vol, [minVol, maxVol], [0, 100])
+    draw_ui(img, vol_percentage, muted)
 
     cv2.imshow("Volume Control", img)
     key = cv2.waitKey(1) & 0xFF
