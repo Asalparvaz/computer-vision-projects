@@ -21,9 +21,6 @@ devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = cast(interface, POINTER(IAudioEndpointVolume))
-volRange = volume.GetVolumeRange()
-minVol = volRange[0]
-maxVol = volRange[1]
 
 muted = False
 mute_seen_prev = False
@@ -35,7 +32,7 @@ just_unmuted = False
 unmute_delay_cooldown = 10
 unmute_frame_counter = 0
 
-last_volume = 0
+last_volume = 0.0
 
 color = (77, 77, 77)
 
@@ -57,12 +54,13 @@ while True:
             if muted:
                 muted=False
                 just_unmuted = True
-                volume.SetMasterVolumeLevel(last_volume, None)
+                volume.SetMasterVolumeLevelScalar(last_volume, None)
             else:
                 muted = True
                 mute_cooldown = True
-                last_volume = volume.GetMasterVolumeLevel()
-                volume.SetMasterVolumeLevel(minVol, None)
+                last_volume = volume.GetMasterVolumeLevelScalar()
+                volume.SetMasterVolumeLevelScalar(0.0, None)
+
             mute_frame_counter = 0
             unmute_frame_counter = 0
 
@@ -90,10 +88,10 @@ while True:
 
             length = math.hypot(x2-x1, y2-y1)
 
-            vol = np.interp(length, [20, 200], [minVol, maxVol])
-            volume.SetMasterVolumeLevel(vol, None)
+            vol_scalar = np.interp(length, [20, 200], [0.0, 1.0])
+            volume.SetMasterVolumeLevelScalar(vol_scalar, None)
 
-            vol_percentage = np.interp(length, [20, 200], [0, 100])
+            vol_percentage = vol_scalar * 100
 
             if vol_percentage < 5:
                 color = (0, 0, 255)
@@ -102,8 +100,9 @@ while True:
             else:
                 color = (77, 77, 77)
 
-    current_vol = volume.GetMasterVolumeLevel()
-    vol_percentage = np.interp(current_vol, [minVol, maxVol], [0, 100])
+    current_vol = volume.GetMasterVolumeLevelScalar()
+    vol_percentage = current_vol * 100
+
     draw_ui(img, vol_percentage, muted)
 
     cv2.imshow("Volume Control", img)
