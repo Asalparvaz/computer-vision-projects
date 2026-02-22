@@ -1,4 +1,8 @@
 # 🔉 Gesture Volume Control
+![Python 3.10](https://img.shields.io/badge/python-3.10-blue)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10.9-blue)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.13.0-green)
+![Pycaw](https://img.shields.io/badge/Pycaw-20230407-orange)
 
 Control your system volume using hand gestures in real-time.
 
