@@ -161,6 +161,8 @@ while True:
                 color = (77, 77, 77)
 
     current_vol = volume.GetMasterVolumeLevelScalar()
+    if muted:
+        current_vol = 0
     vol_percentage = current_vol * 100
 
     draw_ui(img, vol_percentage, muted)
