@@ -79,12 +79,14 @@ while True:
             if muted:
                 muted=False
                 just_unmuted = True
+                volume.SetMute(0, None)
                 volume.SetMasterVolumeLevelScalar(mute_last_volume, None)
             else:
                 muted = True
                 mute_cooldown = True
                 mute_last_volume = volume.GetMasterVolumeLevelScalar()
                 volume.SetMasterVolumeLevelScalar(0.0, None)
+                volume.SetMute(1, None)
 
             mute_frame_counter = 0
             unmute_frame_counter = 0
