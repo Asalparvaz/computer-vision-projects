@@ -46,25 +46,16 @@ class HandDetector():
                 hand_types.append(hand.classification[0].label)
         return hand_types
 
-    def is_fist(self, lmList, handType="right"):
-        if len(lmList) == 0:
+    def is_mute(self, lmList):
+        if len(lmList) < 21:
             return False
 
-        # Thumb detection
-        # location of the thumb tip related to the base of it
-        if handType == "Right":
-            thumb_curled = lmList[4][1] > lmList[3][1]
-        else:
-            thumb_curled = lmList[4][1] < lmList[3][1]
+        index_up = lmList[8][2] < lmList[6][2]
+        middle_up = lmList[12][2] < lmList[10][2]
+        ring_up = lmList[16][2] < lmList[14][2]
+        pinky_up = lmList[20][2] < lmList[18][2]
 
-        # Other fingers
-        fingers_curled = True
-        for id in range(8, 21, 4):  # 8, 12, 16, 20
-            if lmList[id][2] < lmList[id - 2][2]:  # If any tip is above middle joint
-                fingers_curled = False
-                break
-
-        return thumb_curled and fingers_curled
+        return (index_up and middle_up) and not (ring_up or pinky_up)
 
     def is_hold(self, lmList):
         if len(lmList) < 21:

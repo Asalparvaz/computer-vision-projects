@@ -72,10 +72,10 @@ while True:
         ## ================= MUTE =================
 
         handType = detector.get_hand_type()[0]
-        is_fist = detector.is_fist(lmList, handType=handType)
+        is_mute = detector.is_mute(lmList)
 
 
-        if not hold_process and is_fist and not mute_seen_prev and not mute_cooldown:
+        if not hold_process and is_mute and not mute_seen_prev and not mute_cooldown:
             if muted:
                 muted=False
                 just_unmuted = True
@@ -90,7 +90,7 @@ while True:
             unmute_frame_counter = 0
 
 
-        mute_seen_prev = is_fist
+        mute_seen_prev = is_mute
 
         if mute_cooldown:
             mute_frame_counter+=1

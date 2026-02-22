@@ -7,7 +7,7 @@ It also supports gesture-based mute/unmute, a hold feature, and an on-screen UI 
 
 ## Features 🎯
 - Hand gesture volume control (thumb & index distance)  
-- Gesture-based mute/unmute (fist detection)  
+- Gesture-based mute/unmute (peace sign detection)  
 - Hold volume (ASL ILY gesture detection)  
 - Cooldown and edge-detection for gestures  
 - On-screen volume bar with color feedback  
@@ -26,9 +26,17 @@ It also supports gesture-based mute/unmute, a hold feature, and an on-screen UI 
 - ⚪ Neutral range  
 
 ### Mute Gesture
-- Make a fist → toggle mute/unmute  
+- Make a peace sign → toggle mute/unmute  
+- Placement of the thumb is not important  
 - Volume restores on unmute  
 - Visual icon feedback on screen  
+
+> **Peace Sign Visual Description:** ✌️   
+> - **Index finger:** up  
+> - **Middle finger:** up  
+> - **Ring finger:** down  
+> - **Pinky:** down  
+> - **Thumb:** not important 
 
 ### Hold Gesture
 - Make the ASL ILY sign → hold current volume  
@@ -48,7 +56,7 @@ It also supports gesture-based mute/unmute, a hold feature, and an on-screen UI 
 2. MediaPipe detects 21 hand landmarks  
 3. Gesture logic:
    - Volume control (distance between thumb and index)  
-   - Mute toggle (fist)  
+   - Mute toggle (peace sign, thumb placement not important)  
    - Hold (ASL ILY gesture)  
 4. Volume is mapped to system audio range  
 5. UI module renders:
