@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def draw_ui(img, vol_percentage, muted=False):
+def draw_ui(img, vol_percentage, muted=False, hold=False):
     bar_x = 50
     bar_y = 150
     bar_width= 30
@@ -58,3 +58,25 @@ def draw_ui(img, vol_percentage, muted=False):
         cv2.line(img, (icon_x + 27, icon_y - 3),
                  (icon_x - 3, icon_y + 33),
                  (0, 0, 255), 2)
+
+
+
+    # Lock icon only if hold
+    if hold:
+        lock_x = icon_x
+        lock_y = icon_y - 50
+
+        cv2.rectangle(img,
+                      (lock_x, lock_y + 15),
+                      (lock_x + 20, lock_y + 35),
+                      (255, 255, 255),
+                      cv2.FILLED)
+
+        cv2.ellipse(img,
+                    (lock_x + 10, lock_y + 15),
+                    (10, 12),
+                    0,
+                    180,
+                    360,
+                    (255, 255, 255),
+                    2)

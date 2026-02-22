@@ -112,12 +112,10 @@ while True:
             if hold:
                 hold = False
                 just_unhold = True
-                print("Unhold!")
             else:
                 hold = True
                 hold_cooldown = True
                 hold_last_volume = volume.GetMasterVolumeLevelScalar()
-                print("Hold!")
             hold_frame_counter = 0
             unhold_frame_counter = 0
 
@@ -165,7 +163,7 @@ while True:
         current_vol = 0
     vol_percentage = current_vol * 100
 
-    draw_ui(img, vol_percentage, muted)
+    draw_ui(img, vol_percentage, muted, hold)
 
     cv2.imshow("Volume Control", img)
     key = cv2.waitKey(1) & 0xFF
