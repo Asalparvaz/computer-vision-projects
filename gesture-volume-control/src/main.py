@@ -22,6 +22,8 @@ interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = cast(interface, POINTER(IAudioEndpointVolume))
 
+## MUTE VARIABLES
+
 muted = False
 mute_seen_prev = False
 mute_cooldown = False
@@ -32,7 +34,23 @@ just_unmuted = False
 unmute_delay_cooldown = 10
 unmute_frame_counter = 0
 
-last_volume = 0.0
+mute_last_volume = 0.0
+
+
+## HOLD VARIABLES
+
+hold = False
+hold_seen_prev = False
+hold_cooldown = False
+hold_cooldown_frames = 20
+hold_frame_counter = 0
+
+just_unhold = False
+unhold_delay_cooldown = 10
+unhold_frame_counter = 0
+
+hold_last_volume = 0.0
+
 
 color = (77, 77, 77)
 
@@ -46,19 +64,26 @@ while True:
 
     if len(lmList) != 0:
 
+        ## Check if any process is ongoing:
+
+        mute_process = muted or just_unmuted
+        hold_process = hold or just_unhold
+
+        ## ================= MUTE =================
+
         handType = detector.get_hand_type()[0]
         is_fist = detector.is_fist(lmList, handType=handType)
 
 
-        if is_fist and not mute_seen_prev and not mute_cooldown:
+        if not hold_process and is_fist and not mute_seen_prev and not mute_cooldown:
             if muted:
                 muted=False
                 just_unmuted = True
-                volume.SetMasterVolumeLevelScalar(last_volume, None)
+                volume.SetMasterVolumeLevelScalar(mute_last_volume, None)
             else:
                 muted = True
                 mute_cooldown = True
-                last_volume = volume.GetMasterVolumeLevelScalar()
+                mute_last_volume = volume.GetMasterVolumeLevelScalar()
                 volume.SetMasterVolumeLevelScalar(0.0, None)
 
             mute_frame_counter = 0
@@ -77,7 +102,42 @@ while True:
             if unmute_frame_counter >= unmute_delay_cooldown:
                 just_unmuted = False
 
-        if not muted and not just_unmuted:
+
+
+        ## ================= HOLD =================
+
+        is_hold = detector.is_hold(lmList)
+
+        if not mute_process and is_hold and not hold_seen_prev and not hold_cooldown:
+            if hold:
+                hold = False
+                just_unhold = True
+                print("Unhold!")
+            else:
+                hold = True
+                hold_cooldown = True
+                hold_last_volume = volume.GetMasterVolumeLevelScalar()
+                print("Hold!")
+            hold_frame_counter = 0
+            unhold_frame_counter = 0
+
+        hold_seen_prev = is_hold
+
+        if hold_cooldown:
+            hold_frame_counter += 1
+            if hold_frame_counter >= hold_cooldown_frames:
+                hold_cooldown = False
+
+        if just_unhold:
+            unhold_frame_counter += 1
+            if unhold_frame_counter >= unhold_delay_cooldown:
+                just_unhold = False
+
+        if hold_process:
+            volume.SetMasterVolumeLevelScalar(hold_last_volume, None)
+
+
+        if not (mute_process or hold_process):
             x1, y1 = lmList[4][1], lmList[4][2]
             x2, y2 = lmList[8][1], lmList[8][2]
             cx, cy = (x1+x2) // 2 , (y1+y2) // 2

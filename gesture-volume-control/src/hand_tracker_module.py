@@ -65,3 +65,14 @@ class HandDetector():
                 break
 
         return thumb_curled and fingers_curled
+
+    def is_hold(self, lmList):
+        if len(lmList) < 21:
+            return False
+
+        index_up = lmList[8][2] < lmList[6][2]
+        middle_up = lmList[12][2] < lmList[10][2]
+        ring_up = lmList[16][2] < lmList[14][2]
+        pinky_up = lmList[20][2] < lmList[18][2]
+
+        return (index_up and pinky_up) and not (middle_up or ring_up)
