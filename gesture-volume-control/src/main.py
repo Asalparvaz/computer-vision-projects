@@ -26,10 +26,10 @@ minVol = volRange[0]
 maxVol = volRange[1]
 
 muted = False
-fist_seen_prev = False
-fist_cooldown = False
-cooldown_frames = 20
-frame_counter = 0
+mute_seen_prev = False
+mute_cooldown = False
+mute_cooldown_frames = 20
+mute_frame_counter = 0
 
 just_unmuted = False
 unmute_delay_cooldown = 10
@@ -53,35 +53,31 @@ while True:
         is_fist = detector.is_fist(lmList, handType=handType)
 
 
-        if is_fist and not fist_seen_prev and not fist_cooldown:
+        if is_fist and not mute_seen_prev and not mute_cooldown:
             if muted:
                 muted=False
                 just_unmuted = True
                 volume.SetMasterVolumeLevel(last_volume, None)
-                print("Unmuted!")
             else:
                 muted = True
-                just_unmuted = False
+                mute_cooldown = True
                 last_volume = volume.GetMasterVolumeLevel()
                 volume.SetMasterVolumeLevel(minVol, None)
-                print("Muted!")
-            fist_cooldown = True
-            frame_counter = 0
+            mute_frame_counter = 0
             unmute_frame_counter = 0
 
 
-        fist_seen_prev = is_fist
+        mute_seen_prev = is_fist
 
-        if fist_cooldown:
-            frame_counter+=1
-            if frame_counter > cooldown_frames:
-                fist_cooldown = False
+        if mute_cooldown:
+            mute_frame_counter+=1
+            if mute_frame_counter >= mute_cooldown_frames:
+                mute_cooldown = False
 
         if just_unmuted:
             unmute_frame_counter+=1
-            if unmute_frame_counter > unmute_delay_cooldown:
+            if unmute_frame_counter >= unmute_delay_cooldown:
                 just_unmuted = False
-
 
         if not muted and not just_unmuted:
             x1, y1 = lmList[4][1], lmList[4][2]
