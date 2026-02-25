@@ -8,7 +8,7 @@ detector = htm.HandDetector(maxHands=1)
 
 screen_width, screen_height = autopy.screen.size()
 camera_width, camera_height = 640, 480
-horizontal_frame_crop = 100 # Frame Reduction
+horizontal_frame_crop = 100
 top_frame_crop = 50
 bottom_frame_crop = 150
 
@@ -36,9 +36,10 @@ while True:
 
         fingers = detector.fingers_up()
 
-        cv2.rectangle(img, (horizontal_frame_crop, top_frame_crop), (camera_width - horizontal_frame_crop, camera_height - bottom_frame_crop), (0, 0, 255), 2)
+        cv2.rectangle(img, (horizontal_frame_crop, top_frame_crop),
+                      (camera_width - horizontal_frame_crop, camera_height - bottom_frame_crop), (0, 0, 255), 2)
 
-        if fingers[1] and not fingers[2]:
+        if fingers[1] and not (fingers[2] or fingers[0]):
             # moving mode
 
             x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
@@ -52,14 +53,23 @@ while True:
             ploc_x, ploc_y = cloc_x, cloc_y
 
 
-        if fingers[1] and fingers[2]:
-            # clicking mode
+        if fingers[1] and fingers[2] and not (fingers[0] or fingers[3] or fingers[4]):
+            # clicking mode LEFT
 
             length, img, line_info = detector.find_distance(8, 12, img)
 
             if length < 30:
                 cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click()
+
+        if fingers[1] and fingers[0] and not (fingers[2] or fingers[3] or fingers[4]):
+            # clicking mode RIGHT
+
+            length, img, line_info = detector.find_distance(8, 4, img)
+
+            if length < 70:
+                cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
+                autopy.mouse.click(button=autopy.mouse.Button.RIGHT)
 
 
     cv2.imshow("Virtual Mouse", img)
