@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import math
 
 class HandDetector():
     def __init__(self, mode=False, maxHands=2, detectionCon=0.5, trackCon=0.5):
@@ -46,30 +47,39 @@ class HandDetector():
                 hand_types.append(hand.classification[0].label)
         return hand_types
 
+    def is_thumb_up(self):
+        hand_types = self.get_hand_type()
+        hand_type = hand_types[0] if hand_types else "Left"
+
+        thumb_tip = self.lmList[4]
+        thumb_ip = self.lmList[3]
+        thumb_mcp = self.lmList[2]
+        wrist = self.lmList[0]
+
+        if hand_type == "Right":
+            horizontal_check = thumb_tip[0] > thumb_ip[0]
+        else:
+            horizontal_check = thumb_tip[0] < thumb_ip[0]
+
+        # Thumb tip is above thumb IP
+        vertical_check = thumb_tip[1] < thumb_ip[1] < thumb_mcp[1]
+
+        # Thumb tip is not too close to palm
+        distance_to_palm = math.sqrt((thumb_tip[0] - wrist[0]) ** 2 + (thumb_tip[1] - wrist[1]) ** 2)
+        palm_distance_check = distance_to_palm > 50
+
+        return int(horizontal_check and vertical_check and palm_distance_check)
+
+
     def fingers_up(self):
         fingers = []
 
         if len(self.lmList) < 21:
             return fingers
 
-        hand_types = self.get_hand_type()
-        hand_type = hand_types[0] if hand_types else "Left"
-        # since my img is flipped, hand types will be flipped
-
         # THUMB
-        thumb_tip = self.lmList[4][1:]
-        thumb_ip = self.lmList[3][1:]
+        fingers.append(self.is_thumb_up())
 
-        if hand_type == "Left":
-            if thumb_tip[0] > thumb_ip[0]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
-        else:
-            if thumb_tip[0] < thumb_ip[0]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
 
         # INDEX FINGER
         if self.lmList[8][2] < self.lmList[6][2]:
