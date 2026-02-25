@@ -53,13 +53,14 @@ class HandDetector():
             return fingers
 
         hand_types = self.get_hand_type()
-        hand_type = hand_types[0] if hand_types else "Right"
+        hand_type = hand_types[0] if hand_types else "Left"
+        # since my img is flipped, hand types will be flipped
 
         # THUMB
         thumb_tip = self.lmList[4][1:]
         thumb_ip = self.lmList[3][1:]
 
-        if hand_type == "Right":
+        if hand_type == "Left":
             if thumb_tip[0] > thumb_ip[0]:
                 fingers.append(1)
             else:
@@ -103,16 +104,16 @@ class HandDetector():
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
         if draw:
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), t)
-            cv2.circle(img, (x1, y1), r, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (x2, y2), r, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (cx, cy), r, (255, 0, 255), cv2.FILLED)
+            cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), t)
+            cv2.circle(img, (x1, y1), r, (255, 255, 255), cv2.FILLED)
+            cv2.circle(img, (x2, y2), r, (255, 255, 255), cv2.FILLED)
+            cv2.circle(img, (cx, cy), r, (255, 255, 255), cv2.FILLED)
 
         length = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
 
         return length, img, [x1, y1, x2, y2, cx, cy]
 
-    def get_bounding_box(self, handNo: int = 0):
+    def get_bounding_box(self, img, handNo: int = 0, draw=True):
         if len(self.lmList) < 21:
             return None
 
@@ -123,5 +124,10 @@ class HandDetector():
         y_min, y_max = min(y_coords), max(y_coords)
 
         padding = 20
+
+        if draw:
+            cv2.rectangle(img, (x_min - padding, y_min - padding) ,
+                          (x_max + padding, y_max + padding), (255, 255, 255), 2)
+
         return (x_min - padding, y_min - padding,
                 x_max + padding, y_max + padding)
