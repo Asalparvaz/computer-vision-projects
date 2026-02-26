@@ -105,21 +105,20 @@ while True:
                     pyautogui.mouseDown()
                     is_dragging = True
 
-                x3 = np.interp(line_info[4], (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
-                y3 = np.interp(line_info[5], (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
+                x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
+                y3 = np.interp(y1, (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
 
                 cloc_x = ploc_x + (x3 - ploc_x) / smoothening
                 cloc_y = ploc_y + (y3 - ploc_y) / smoothening
+                ploc_x, ploc_y = cloc_x, cloc_y
 
                 pyautogui.moveTo(cloc_x, cloc_y)
+                cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 255), cv2.FILLED)
 
             else:
                 if is_dragging:
                     pyautogui.mouseUp()
                     is_dragging = False
-
-            if is_dragging:
-                cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 255), cv2.FILLED)
 
         if not fingers[0] and is_dragging:
             is_dragging = False
