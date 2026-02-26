@@ -16,6 +16,8 @@ smoothening = 3
 ploc_x, ploc_y = 0, 0
 cloc_x, cloc_y = 0, 0
 
+CLICK_LENGTH_THRESHOLD = 30
+
 
 cap = cv2.VideoCapture(1)
 cap.set(3, camera_width)
@@ -39,7 +41,7 @@ while True:
         cv2.rectangle(img, (horizontal_frame_crop, top_frame_crop),
                       (camera_width - horizontal_frame_crop, camera_height - bottom_frame_crop), (0, 0, 255), 2)
 
-        if fingers[1] and not (fingers[2] or fingers[0]):
+        if fingers[1] and not (fingers[2] or fingers[3]):
             # moving mode
 
             x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
@@ -58,16 +60,16 @@ while True:
 
             length, img, line_info = detector.find_distance(8, 12, img)
 
-            if length < 30:
+            if length < CLICK_LENGTH_THRESHOLD:
                 cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click()
 
-        if fingers[1] and fingers[0] and not (fingers[2] or fingers[3] or fingers[4]):
+        if fingers[1] and fingers[2] and fingers[3] and not (fingers[0] or fingers[4]):
             # clicking mode RIGHT
 
-            length, img, line_info = detector.find_distance(8, 4, img)
+            length, img, line_info = detector.find_distance(8, 12, img)
 
-            if length < 70:
+            if length < CLICK_LENGTH_THRESHOLD:
                 cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click(button=autopy.mouse.Button.RIGHT)
 
