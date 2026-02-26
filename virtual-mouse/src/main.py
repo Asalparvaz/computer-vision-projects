@@ -1,13 +1,13 @@
 import cv2
 import numpy as np
-import autopy
+import pyautogui
 import time
 
 import hand_tracker_module as htm
 
 detector = htm.HandDetector(maxHands=1)
 
-screen_width, screen_height = autopy.screen.size()
+screen_width, screen_height = pyautogui.size()
 camera_width, camera_height = 640, 480
 horizontal_frame_crop = 100
 top_frame_crop = 50
@@ -19,12 +19,13 @@ cloc_x, cloc_y = 0, 0
 
 CLICK_LENGTH_THRESHOLD = 30
 CLICK_DELAY = 0.3
-DOUBLE_CLICK_TIMEOUT = 0.4 # Max time between 2 click to be double click
-DOUBLE_CLICK_DELAY = 0.4
+DOUBLE_CLICK_TIMEOUT = 0.4
 
 last_click_time = 0
-last_click_type = None
 pending_double_click = False
+
+pyautogui.PAUSE = 0
+pyautogui.FAILSAFE = False
 
 cap = cv2.VideoCapture(1)
 cap.set(3, camera_width)
@@ -37,30 +38,26 @@ while True:
     img = cv2.flip(img, 1)
     img = detector.find_hands(img)
     lmList = detector.find_position(img)
-    bbox = detector.get_bounding_box(img)
 
     if len(lmList) != 0:
-        x1, y1 = lmList[8][1:] # index finger
-        x2, y2 = lmList[12][1:] # middle finger
-
+        x1, y1 = lmList[8][1:]
         fingers = detector.fingers_up()
 
         cv2.rectangle(img, (horizontal_frame_crop, top_frame_crop),
                       (camera_width - horizontal_frame_crop, camera_height - bottom_frame_crop), (0, 0, 255), 2)
 
-        if fingers[1] and not (fingers[2] or fingers[3]):
+        if fingers[1] and not (fingers[0] or fingers[2] or fingers[3] or fingers[4]):
             # moving mode
-
             x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
             y3 = np.interp(y1, (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
 
             cloc_x = ploc_x + (x3 - ploc_x) / smoothening
             cloc_y = ploc_y + (y3 - ploc_y) / smoothening
 
-            autopy.mouse.move(cloc_x, cloc_y)
-            cv2.circle(img, (x1,y1), 15, (0, 0, 255), cv2.FILLED)
-            ploc_x, ploc_y = cloc_x, cloc_y
+            pyautogui.moveTo(cloc_x, cloc_y)
 
+            cv2.circle(img, (x1, y1), 15, (0, 0, 255), cv2.FILLED)
+            ploc_x, ploc_y = cloc_x, cloc_y
 
         if fingers[1] and fingers[2] and not (fingers[0] or fingers[3] or fingers[4]):
             # clicking mode LEFT
@@ -71,15 +68,16 @@ while True:
             if length < CLICK_LENGTH_THRESHOLD:
                 if (current_time - last_click_time) > CLICK_DELAY:
                     if pending_double_click and (current_time - last_click_time) <= DOUBLE_CLICK_TIMEOUT:
-                        autopy.mouse.click(autopy.mouse.Button.LEFT, 2)
+                        # Double click detected
+                        pyautogui.doubleClick()
                         cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
                         pending_double_click = False
-                        last_click_time = current_time + DOUBLE_CLICK_DELAY
-
+                        last_click_time = current_time
                     else:
+                        # First click or timeout done
                         pending_double_click = True
                         cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
-                        autopy.mouse.click()
+                        pyautogui.click()
                         last_click_time = current_time
 
         if fingers[1] and fingers[2] and fingers[3] and not (fingers[0] or fingers[4]):
@@ -90,14 +88,12 @@ while True:
 
             if length < CLICK_LENGTH_THRESHOLD and (current_time - last_click_time) > CLICK_DELAY:
                 cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
-                autopy.mouse.click(button=autopy.mouse.Button.RIGHT)
+                pyautogui.rightClick()
                 last_click_time = current_time
                 pending_double_click = False
 
-
     cv2.imshow("Virtual Mouse", img)
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
