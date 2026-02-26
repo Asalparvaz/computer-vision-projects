@@ -18,11 +18,14 @@ ploc_x, ploc_y = 0, 0
 cloc_x, cloc_y = 0, 0
 
 CLICK_LENGTH_THRESHOLD = 30
+DRAG_LENGTH_THRESHOLD = 90
 CLICK_DELAY = 0.3
 DOUBLE_CLICK_TIMEOUT = 0.4
 
 last_click_time = 0
 pending_double_click = False
+
+is_dragging = False
 
 pyautogui.PAUSE = 0
 pyautogui.FAILSAFE = False
@@ -91,6 +94,36 @@ while True:
                 pyautogui.rightClick()
                 last_click_time = current_time
                 pending_double_click = False
+
+
+        if fingers[1] and fingers[0] and not (fingers[2] or fingers[3] or fingers[4]):
+            # drag mode
+            length, img, line_info = detector.find_distance(8, 4, img)
+
+            if length < DRAG_LENGTH_THRESHOLD:
+                if not is_dragging:
+                    pyautogui.mouseDown()
+                    is_dragging = True
+
+                x3 = np.interp(line_info[4], (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
+                y3 = np.interp(line_info[5], (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
+
+                cloc_x = ploc_x + (x3 - ploc_x) / smoothening
+                cloc_y = ploc_y + (y3 - ploc_y) / smoothening
+
+                pyautogui.moveTo(cloc_x, cloc_y)
+
+            else:
+                if is_dragging:
+                    pyautogui.mouseUp()
+                    is_dragging = False
+
+            if is_dragging:
+                cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 255), cv2.FILLED)
+
+        if not fingers[0] and is_dragging:
+            is_dragging = False
+            pyautogui.mouseUp()
 
     cv2.imshow("Virtual Mouse", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
