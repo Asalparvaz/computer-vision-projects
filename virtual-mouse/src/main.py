@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import autopy
+import time
 
 import hand_tracker_module as htm
 
@@ -17,7 +18,13 @@ ploc_x, ploc_y = 0, 0
 cloc_x, cloc_y = 0, 0
 
 CLICK_LENGTH_THRESHOLD = 30
+CLICK_DELAY = 0.3
+DOUBLE_CLICK_TIMEOUT = 0.4 # Max time between 2 click to be double click
+DOUBLE_CLICK_DELAY = 0.4
 
+last_click_time = 0
+last_click_type = None
+pending_double_click = False
 
 cap = cv2.VideoCapture(1)
 cap.set(3, camera_width)
@@ -57,21 +64,35 @@ while True:
 
         if fingers[1] and fingers[2] and not (fingers[0] or fingers[3] or fingers[4]):
             # clicking mode LEFT
+            current_time = time.time()
 
             length, img, line_info = detector.find_distance(8, 12, img)
 
             if length < CLICK_LENGTH_THRESHOLD:
-                cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
-                autopy.mouse.click()
+                if (current_time - last_click_time) > CLICK_DELAY:
+                    if pending_double_click and (current_time - last_click_time) <= DOUBLE_CLICK_TIMEOUT:
+                        autopy.mouse.click(autopy.mouse.Button.LEFT, 2)
+                        cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
+                        pending_double_click = False
+                        last_click_time = current_time + DOUBLE_CLICK_DELAY
+
+                    else:
+                        pending_double_click = True
+                        cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
+                        autopy.mouse.click()
+                        last_click_time = current_time
 
         if fingers[1] and fingers[2] and fingers[3] and not (fingers[0] or fingers[4]):
             # clicking mode RIGHT
+            current_time = time.time()
 
             length, img, line_info = detector.find_distance(8, 12, img)
 
-            if length < CLICK_LENGTH_THRESHOLD:
+            if length < CLICK_LENGTH_THRESHOLD and (current_time - last_click_time) > CLICK_DELAY:
                 cv2.circle(img, (line_info[4], line_info[5]), 15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click(button=autopy.mouse.Button.RIGHT)
+                last_click_time = current_time
+                pending_double_click = False
 
 
     cv2.imshow("Virtual Mouse", img)
