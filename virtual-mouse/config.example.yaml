@@ -1,0 +1,34 @@
+# VIRTUAL MOUSE CONFIGURATION TEMPLATE
+# Copy this file to 'config.yaml' and customize it for your setup
+# All settings have defaults, so you only need to change what's different
+
+# Camera Settings
+camera:
+  device_id: 0           # 0 = built-in camera, 1 = external, 2 = etc.
+  width: 640             # Camera capture width
+  height: 480            # Camera capture height
+
+# Screen Settings (leave null for auto-detection)
+screen:
+  width: null            # Manual override if auto-detection doesn't work
+  height: null
+
+# Mouse Control Settings
+mouse:
+  smoothening: 3               # Higher = smoother but more delay (1-10)
+  click_length_threshold: 30   # Distance between fingers to trigger click
+  drag_length_threshold: 90    # Distance to trigger drag mode
+  click_delay: 0.3             # Seconds between clicks
+  double_click_timeout: 0.4    # Max time for double click
+
+# Scroll Settings
+scroll:
+  speed: 100             # Scroll speed multiplier
+  deadzone: 20           # Minimum movement to trigger scroll
+  cooldown: 0.05         # Min time between scroll events
+
+# Frame Cropping (region where hand is tracked)
+crop:
+  horizontal: 100        # Pixels to crop from left/right
+  top: 50                # Pixels to crop from top
+  bottom: 150            # Pixels to crop from bottom

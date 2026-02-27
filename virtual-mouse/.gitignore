@@ -7,3 +7,8 @@ __pycache__/
 
 # IDE
 .idea/
+
+# Configuration files
+config.yaml
+*.yaml
+!config.example.yaml

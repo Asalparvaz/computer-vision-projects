@@ -4,40 +4,49 @@ import pyautogui
 import time
 
 import hand_tracker_module as htm
+from config_loader import config
 
 detector = htm.HandDetector(maxHands=1)
 
-screen_width, screen_height = pyautogui.size()
-camera_width, camera_height = 640, 480
-horizontal_frame_crop = 100
-top_frame_crop = 50
-bottom_frame_crop = 150
+# Screen dimensions
+screen_width = config.screen_width
+screen_height = config.screen_height
 
-smoothening = 3
+# Camera settings
+camera_id = config.camera.get('device_id', 1)
+camera_width = config.camera.get('width', 640)
+camera_height = config.camera.get('height', 480)
+
+# Crop settings
+horizontal_frame_crop = config.crop.get('horizontal', 100)
+top_frame_crop = config.crop.get('top', 50)
+bottom_frame_crop = config.crop.get('bottom', 150)
+
+# Mouse settings
+SMOOTHENING = config.mouse.get('smoothening', 3)
+CLICK_LENGTH_THRESHOLD = config.mouse.get('click_length_threshold', 30)
+DRAG_LENGTH_THRESHOLD = config.mouse.get('drag_length_threshold', 90)
+CLICK_DELAY = config.mouse.get('click_delay', 0.3)
+DOUBLE_CLICK_TIMEOUT = config.mouse.get('double_click_timeout', 0.4)
+
+# Scroll settings
+SCROLL_SPEED = config.scroll.get('speed', 100)
+SCROLL_DEADZONE = config.scroll.get('deadzone', 20)
+SCROLL_COOLDOWN = config.scroll.get('cooldown', 0.05)
+
+
 ploc_x, ploc_y = 0, 0
 cloc_x, cloc_y = 0, 0
-
-CLICK_LENGTH_THRESHOLD = 30
-DRAG_LENGTH_THRESHOLD = 90
-CLICK_DELAY = 0.3
-DOUBLE_CLICK_TIMEOUT = 0.4
-
 last_click_time = 0
 pending_double_click = False
-
-SCROLL_SPEED = 100
-SCROLL_DEADZONE = 20
-SCROLL_COOLDOWN = 0.05
 scroll_start_y = None
 scroll_active = False
-last_scroll_time = 0
-
 is_dragging = False
 
 pyautogui.PAUSE = 0
 pyautogui.FAILSAFE = False
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(camera_id)
 cap.set(3, camera_width)
 cap.set(4, camera_height)
 
@@ -61,8 +70,8 @@ while True:
             x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
             y3 = np.interp(y1, (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
 
-            cloc_x = ploc_x + (x3 - ploc_x) / smoothening
-            cloc_y = ploc_y + (y3 - ploc_y) / smoothening
+            cloc_x = ploc_x + (x3 - ploc_x) / SMOOTHENING
+            cloc_y = ploc_y + (y3 - ploc_y) / SMOOTHENING
 
             pyautogui.moveTo(cloc_x, cloc_y)
 
@@ -115,8 +124,8 @@ while True:
                 x3 = np.interp(x1, (horizontal_frame_crop, camera_width - horizontal_frame_crop), (0, screen_width))
                 y3 = np.interp(y1, (top_frame_crop, camera_height - bottom_frame_crop), (0, screen_height))
 
-                cloc_x = ploc_x + (x3 - ploc_x) / smoothening
-                cloc_y = ploc_y + (y3 - ploc_y) / smoothening
+                cloc_x = ploc_x + (x3 - ploc_x) / SMOOTHENING
+                cloc_y = ploc_y + (y3 - ploc_y) / SMOOTHENING
                 ploc_x, ploc_y = cloc_x, cloc_y
 
                 pyautogui.moveTo(cloc_x, cloc_y)
