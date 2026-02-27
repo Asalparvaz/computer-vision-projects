@@ -32,7 +32,6 @@ scroll_start_y = None
 scroll_active = False
 last_scroll_time = 0
 
-
 is_dragging = False
 
 pyautogui.PAUSE = 0
@@ -132,7 +131,7 @@ while True:
             is_dragging = False
             pyautogui.mouseUp()
 
-        if fingers[1] and fingers[4] and not (fingers[0] or fingers[2] or fingers[3]) :
+        if fingers[1] and fingers[4] and not (fingers[0] or fingers[2] or fingers[3]):
             # scroll mode
             current_time = time.time()
             x5, y5 = lmList[20][1:] # pinky tip
@@ -143,7 +142,7 @@ while True:
             else:
                 delta_y = scroll_start_y - y1
 
-                if abs(delta_y) > SCROLL_DEADZONE and (current_time - last_click_time) > SCROLL_COOLDOWN:
+                if abs(delta_y) > SCROLL_DEADZONE and (current_time - last_scroll_time) > SCROLL_COOLDOWN:
                     scroll_amount = int(delta_y / SCROLL_DEADZONE * SCROLL_SPEED)
 
                     pyautogui.scroll(scroll_amount)
@@ -158,7 +157,6 @@ while True:
         else:
             scroll_active = False
             scroll_start_y = None
-        
 
     cv2.imshow("Virtual Mouse", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
