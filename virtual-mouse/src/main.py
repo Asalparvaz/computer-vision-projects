@@ -139,24 +139,27 @@ while True:
             if not scroll_active:
                 scroll_active = True
                 scroll_start_y = y1
-            else:
-                delta_y = scroll_start_y - y1
+                last_scroll_time = current_time
 
-                if abs(delta_y) > SCROLL_DEADZONE and (current_time - last_scroll_time) > SCROLL_COOLDOWN:
-                    scroll_amount = int(delta_y / SCROLL_DEADZONE * SCROLL_SPEED)
+            delta_y = scroll_start_y - y1
 
-                    pyautogui.scroll(scroll_amount)
+            if abs(delta_y) > SCROLL_DEADZONE and (current_time - last_scroll_time) > SCROLL_COOLDOWN:
+                scroll_amount = int(delta_y / SCROLL_DEADZONE * SCROLL_SPEED)
 
-                    scroll_start_y = y1
-                    last_scroll_time = current_time
+                pyautogui.scroll(scroll_amount)
+
+                scroll_start_y = y1
+                last_scroll_time = current_time
 
             cv2.circle(img, (x1, y1), 15, (0, 255, 255), cv2.FILLED)
             cv2.circle(img, (x5, y5), 15, (0, 255, 255), cv2.FILLED)
             cv2.line(img, (x1, y1), (x5, y5), (0, 255, 255), 3)
 
         else:
-            scroll_active = False
-            scroll_start_y = None
+            if scroll_active:
+                scroll_active = False
+                scroll_start_y = None
+                last_scroll_time = 0
 
     cv2.imshow("Virtual Mouse", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
