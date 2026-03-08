@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+
+# IDE
+.idea/
+
+# Configuration files
+config.yaml
+*.yaml
+!config.example.yaml
