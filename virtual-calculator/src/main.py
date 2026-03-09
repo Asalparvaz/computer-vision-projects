@@ -23,6 +23,25 @@ current_equation = ''
 
 delay_counter = 0
 
+def is_valid_operation(current_equation, value):
+    operations = ('+', '-', '/', '*')
+    if value == '.' and current_equation[-1:] == '.':
+        return False
+    if value == '0' and current_equation[-1:] == '/':
+        return False
+    if not value in operations:
+        return True
+    if not current_equation and value in ('/', '*'):
+        return False
+    if not (current_equation[-1:] in operations):
+        return True
+    if value == '*' :
+        if current_equation[-2:] == '**' or current_equation[-1:] in ('+', '-', '/'):
+            return False
+        return True
+    return False
+
+
 while True:
     success, img = cap.read()
     if not success:
@@ -53,7 +72,8 @@ while True:
                     if value == '=' :
                         current_equation = str(eval(current_equation))
                     else:
-                        current_equation += value
+                        if is_valid_operation(current_equation, value):
+                            current_equation += value
                     delay_counter = 1
 
     if delay_counter != 0:
