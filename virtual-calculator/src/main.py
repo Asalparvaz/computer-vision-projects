@@ -1,8 +1,23 @@
 import cv2
 import hand_tracker_module as htm
+import button_module as btn
 
 cap = cv2.VideoCapture(1)
+cap.set(3, 1280) # width
+cap.set(4,720) # height
 detector = htm.HandDetector(detectionCon=0.8, maxHands=1)
+
+button_list = []
+button_list_values = [['7', '8', '9', '*'],
+                      ['4', '5', '6', '-'],
+                      ['1', '2', '3', '+'],
+                      ['0', '/', '.', '=']]
+
+for x in range(4):
+    for y in range(4):
+        xpos = x * 100 + 800
+        ypos = y * 100 + 150
+        button_list.append(btn.Button((xpos, ypos), 100, 100, button_list_values[y][x]))
 
 while True:
     success, img = cap.read()
@@ -12,6 +27,13 @@ while True:
     img = detector.find_hands(img)
     lmList = detector.find_position(img)
 
+    for button in button_list:
+        button.draw(img)
+
+    cv2.rectangle(img, (800, 50), (800 + 400, 50 + 100),
+                  (213, 213, 213), cv2.FILLED)
+    cv2.rectangle(img, (800, 50), (800 + 400, 5 0 + 100),
+                  (50, 50, 50), 3)
 
     cv2.imshow("Virtual Calc", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
