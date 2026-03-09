@@ -19,7 +19,9 @@ for x in range(4):
         ypos = y * 100 + 150
         button_list.append(btn.Button((xpos, ypos), 100, 100, button_list_values[y][x]))
 
-current_equation = '1+3'
+current_equation = ''
+
+delay_counter = 0
 
 while True:
     success, img = cap.read()
@@ -39,6 +41,28 @@ while True:
 
     cv2.putText(img, current_equation, (810, 120), cv2.FONT_HERSHEY_SIMPLEX,
                 1.5, (50, 50, 50), 3)
+
+    fingers_up_list = detector.fingers_up()
+    if lmList and fingers_up_list[1] and fingers_up_list[2]:
+        length, img, info = detector.find_distance(8, 12, img)
+        x, y = info[4], info[5]
+        if length < 55 and not delay_counter:
+            for button in button_list:
+                if button.check_clicked(x, y, img):
+                    value = button.value
+                    if value == '=' :
+                        current_equation = str(eval(current_equation))
+                    else:
+                        current_equation += value
+                    delay_counter = 1
+
+    if delay_counter != 0:
+        delay_counter += 1
+        if delay_counter > 10:
+            delay_counter = 0
+
+
+
 
     cv2.imshow("Virtual Calc", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
