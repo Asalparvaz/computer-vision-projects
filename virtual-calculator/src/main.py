@@ -19,6 +19,8 @@ for x in range(4):
         ypos = y * 100 + 150
         button_list.append(btn.Button((xpos, ypos), 100, 100, button_list_values[y][x]))
 
+current_equation = '1+3'
+
 while True:
     success, img = cap.read()
     if not success:
@@ -32,8 +34,11 @@ while True:
 
     cv2.rectangle(img, (800, 50), (800 + 400, 50 + 100),
                   (213, 213, 213), cv2.FILLED)
-    cv2.rectangle(img, (800, 50), (800 + 400, 5 0 + 100),
+    cv2.rectangle(img, (800, 50), (800 + 400, 50 + 100),
                   (50, 50, 50), 3)
+
+    cv2.putText(img, current_equation, (810, 120), cv2.FONT_HERSHEY_SIMPLEX,
+                1.5, (50, 50, 50), 3)
 
     cv2.imshow("Virtual Calc", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
