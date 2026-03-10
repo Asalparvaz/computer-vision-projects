@@ -18,6 +18,7 @@ for x in range(4):
         xpos = x * 100 + 800
         ypos = y * 100 + 150
         button_list.append(btn.Button((xpos, ypos), 100, 100, button_list_values[y][x]))
+button_list.append(btn.Button((750, 50), 50, 100, 'c'))
 
 current_equation = ''
 
@@ -71,6 +72,8 @@ while True:
                     value = button.value
                     if value == '=' :
                         current_equation = str(eval(current_equation))
+                    elif value == 'c' :
+                        current_equation = ''
                     else:
                         if is_valid_operation(current_equation, value):
                             current_equation += value
@@ -80,9 +83,6 @@ while True:
         delay_counter += 1
         if delay_counter > 10:
             delay_counter = 0
-
-
-
 
     cv2.imshow("Virtual Calc", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
