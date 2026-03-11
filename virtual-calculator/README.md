@@ -16,6 +16,8 @@ You can calculate addition, subtraction, division, multiplication, and exponenti
 - Five mathematical operations supporting float numbers   
 - Logical operation handeling for equations   
 - Gesture cooldown to prevent accidental multi-click  
+- Clear button (c) : completely clear the equation
+- Backtracking button (b) : remove the last number/operation in equation
 
 
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Pinching%20Hand.png" alt="Pinching Hand" width="25" height="25" /> Demo Concept
@@ -59,7 +61,6 @@ Press `q` to exit.
 
 ## 💡 Possible Improvements
 
-- Add clear button   
 - Configuration support
 - More oeprations (root extraction ...)
 - Scientfic option

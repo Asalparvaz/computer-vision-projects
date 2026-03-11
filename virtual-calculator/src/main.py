@@ -19,6 +19,7 @@ for x in range(4):
         ypos = y * 100 + 150
         button_list.append(btn.Button((xpos, ypos), 100, 100, button_list_values[y][x]))
 button_list.append(btn.Button((750, 50), 50, 100, 'c'))
+button_list.append(btn.Button((700, 50), 50, 100, 'b'))
 
 current_equation = ''
 
@@ -74,6 +75,8 @@ while True:
                         current_equation = str(eval(current_equation))
                     elif value == 'c' :
                         current_equation = ''
+                    elif value == 'b':
+                        current_equation = current_equation[:-1]
                     else:
                         if is_valid_operation(current_equation, value):
                             current_equation += value
