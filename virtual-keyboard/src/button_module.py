@@ -1,7 +1,7 @@
 import cv2
 
 class Button():
-    def __init__(self, pos, width, height, value):
+    def __init__(self, pos, value, width=85, height=85):
         self.pos = pos
         self.width = width
         self.height = height
@@ -12,7 +12,7 @@ class Button():
                       (213, 213, 213), cv2.FILLED)
         cv2.rectangle(img, self.pos, (self.pos[0]+self.width, self.pos[1]+self.height),
                       (50, 50, 50), 3)
-        cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.5), int(self.pos[1]+ self.height / 1.4)), cv2.FONT_HERSHEY_SIMPLEX,
+        cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1]+ self.height / 1.4)), cv2.FONT_HERSHEY_SIMPLEX,
                     2, (50, 50, 50), 2)
 
     def check_clicked(self, x, y, img):

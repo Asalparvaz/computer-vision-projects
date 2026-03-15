@@ -8,7 +8,15 @@ cap.set(4, 720) #height
 
 detector = htm.HandDetector(detectionCon=0.8)
 
-button_test = btn.Button((100, 100),100, 100, 'Q')
+button_list = []
+
+english_keyboard_value = [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                          ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';'],
+                          ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/']]
+
+for y in range(len(english_keyboard_value)):
+    for x, value in enumerate(english_keyboard_value[y]):
+        button_list.append(btn.Button((100 * x + 50 , 100 * y + 50), value))
 
 while True:
     success, img = cap.read()
@@ -18,7 +26,8 @@ while True:
     img = detector.find_hands(img)
     lmList = detector.find_position(img)
 
-    button_test.draw(img)
+    for button in button_list:
+        button.draw(img)
 
     cv2.imshow("Virtual Keyboard", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
