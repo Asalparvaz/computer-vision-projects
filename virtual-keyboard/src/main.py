@@ -34,9 +34,11 @@ while True:
     if lmList and fingers_up_list[1] and fingers_up_list[2]:
         length, img, info = detector.find_distance(8, 12, img)
         x, y = info[4], info[5]
-        if length < 55 and not delay_counter:
+
+        if not delay_counter:
             for button in button_list:
-                if button.check_clicked(x, y, img):
+                if button.check_hover(x, y, img) and length < 55:
+                    button.check_clicked(x, y, img)
                     value = button.value
                     print(value)
                     delay_counter = 1
