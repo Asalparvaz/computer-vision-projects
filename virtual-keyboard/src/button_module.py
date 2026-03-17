@@ -13,7 +13,7 @@ class Button():
         cv2.rectangle(img, self.pos, (self.pos[0]+self.width, self.pos[1]+self.height),
                       (50, 50, 50), 2)
         cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1]+ self.height / 1.4)), cv2.FONT_HERSHEY_SIMPLEX,
-                    1, (50, 50, 50), 2)
+                    0.8, (50, 50, 50), 2)
 
     def check_hover(self, x, y, img):
         if self.pos[0] < x < self.pos[0] + self.width and self.pos[1] < y < self.pos[1] + self.height:
@@ -23,7 +23,7 @@ class Button():
                           (50, 50, 50), 2)
             cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        1, (50, 50, 50), 2)
+                        0.8, (50, 50, 50), 2)
             return True
         return False
 
@@ -35,6 +35,6 @@ class Button():
                           (50, 50, 50), 2)
             cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        1, (50, 50, 50), 2)
+                        0.8, (50, 50, 50), 2)
             return True
         return False
