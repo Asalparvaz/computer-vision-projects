@@ -11,9 +11,9 @@ delay_counter = 0
 
 button_list = []
 
-english_keyboard_value = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='],
-                          ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'],
-                          ['cap', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'ent'],
+english_keyboard_value = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'bs'],
+                          ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+                          ['cap', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\''],
                           ['ctrl', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/']]
 
 english_keyboard_alternative = {'`': '~',
@@ -33,6 +33,7 @@ english_keyboard_alternative = {'`': '~',
                                 '\'': '\"',
                                 '[': '{',
                                 ']': '}',
+                                '\\': '|',
                                 ',': '<',
                                 '.': '>',
                                 '/': '?'}
@@ -43,10 +44,11 @@ for y in range(len(english_keyboard_value)):
             alt_value = english_keyboard_alternative[value]
         else :
             alt_value = None
-        button_list.append(btn.Button((80 * x + 130, 80 * y + 20), value, alt_value = alt_value))
-button_list.append(btn.Button((80 * 11 + 130, 80 * 3 + 20), 'shift', 150))
-button_list.append(btn.Button((130, 80 * 4 + 20), 'alt'))
-button_list.append(btn.Button((210, 80 * 4 + 20), ' ', 70 * 4 + 30, 70))
+        button_list.append(btn.Button((80 * x + 85, 80 * y + 20), value, alt_value = alt_value))
+button_list.append(btn.Button((80 * 12 + 85, 80 * 2 + 20), 'enter', 150))
+button_list.append(btn.Button((80 * 11 + 85, 80 * 3 + 20), 'shift', 230))
+button_list.append(btn.Button((85, 80 * 4 + 20), 'alt'))
+button_list.append(btn.Button((165, 80 * 4 + 20), ' ', 70 * 4 + 30, 70))
 
 while True:
     success, img = cap.read()
