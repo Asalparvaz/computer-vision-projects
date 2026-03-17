@@ -12,7 +12,7 @@ class Button():
                       (213, 213, 213), cv2.FILLED)
         cv2.rectangle(img, self.pos, (self.pos[0]+self.width, self.pos[1]+self.height),
                       (50, 50, 50), 2)
-        cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1]+ self.height / 1.4)), cv2.FONT_HERSHEY_SIMPLEX,
+        cv2.putText(img, self.value.capitalize(), (int(self.pos[0] + self.width / 3.9), int(self.pos[1]+ self.height / 1.4)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.8, (50, 50, 50), 2)
 
     def check_hover(self, x, y, img):
@@ -21,7 +21,7 @@ class Button():
                           (100, 100, 100), cv2.FILLED)
             cv2.rectangle(img, self.pos, (self.pos[0] + self.width, self.pos[1] + self.height),
                           (50, 50, 50), 2)
-            cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
+            cv2.putText(img, self.value.capitalize(), (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         0.8, (50, 50, 50), 2)
             return True
@@ -33,7 +33,7 @@ class Button():
                           (0, 200, 0), cv2.FILLED)
             cv2.rectangle(img, self.pos, (self.pos[0] + self.width, self.pos[1] + self.height),
                           (50, 50, 50), 2)
-            cv2.putText(img, self.value, (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
+            cv2.putText(img, self.value.capitalize(), (int(self.pos[0] + self.width / 3.9), int(self.pos[1] + self.height / 1.4)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         0.8, (50, 50, 50), 2)
             return True
