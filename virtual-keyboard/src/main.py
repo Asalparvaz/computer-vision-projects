@@ -16,9 +16,34 @@ english_keyboard_value = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
                           ['cap', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'ent'],
                           ['ctrl', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/']]
 
+english_keyboard_alternative = {'`': '~',
+                                '1': '!',
+                                '2': '@',
+                                '3': '#',
+                                '4': '$',
+                                '5': '%',
+                                '6': '^',
+                                '7': '&',
+                                '8': '*',
+                                '9': '(',
+                                '0': ')',
+                                '-': '_',
+                                '=': '+',
+                                ';': ':',
+                                '\'': '\"',
+                                '[': '{',
+                                ']': '}',
+                                ',': '<',
+                                '.': '>',
+                                '/': '?'}
+
 for y in range(len(english_keyboard_value)):
     for x, value in enumerate(english_keyboard_value[y]):
-        button_list.append(btn.Button((80 * x + 130, 80 * y + 20), value))
+        if value in english_keyboard_alternative.keys():
+            alt_value = english_keyboard_alternative[value]
+        else :
+            alt_value = None
+        button_list.append(btn.Button((80 * x + 130, 80 * y + 20), value, alt_value = alt_value))
 button_list.append(btn.Button((80 * 11 + 130, 80 * 3 + 20), 'shift', 150))
 button_list.append(btn.Button((130, 80 * 4 + 20), 'alt'))
 button_list.append(btn.Button((210, 80 * 4 + 20), ' ', 70 * 4 + 30, 70))
