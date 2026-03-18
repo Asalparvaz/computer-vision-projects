@@ -13,7 +13,7 @@ button_list = []
 
 english_keyboard_value = [['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'bs'],
                           ['tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
-                          ['cap', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\''],
+                          ['', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\''],
                           ['ctrl', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/']]
 
 english_keyboard_alternative = {'`': '~',
@@ -38,15 +38,21 @@ english_keyboard_alternative = {'`': '~',
                                 '.': '>',
                                 '/': '?'}
 
+caps_button = btn.FuncButton((80 * 0 + 85, 80 * 2 + 20), 'cap')
+shift_button = btn.FuncButton((80 * 11 + 85, 80 * 3 + 20), 'shift', 230)
+
 for y in range(len(english_keyboard_value)):
     for x, value in enumerate(english_keyboard_value[y]):
+        if value == '':
+            continue
         if value in english_keyboard_alternative.keys():
             alt_value = english_keyboard_alternative[value]
         else :
             alt_value = None
         button_list.append(btn.Button((80 * x + 85, 80 * y + 20), value, alt_value = alt_value))
 button_list.append(btn.Button((80 * 12 + 85, 80 * 2 + 20), 'enter', 150))
-button_list.append(btn.Button((80 * 11 + 85, 80 * 3 + 20), 'shift', 230))
+button_list.append(caps_button)
+button_list.append(shift_button)
 button_list.append(btn.Button((85, 80 * 4 + 20), 'alt'))
 button_list.append(btn.Button((165, 80 * 4 + 20), ' ', 70 * 4 + 30, 70))
 
@@ -69,10 +75,14 @@ while True:
         if not delay_counter:
             for button in button_list:
                 if button.check_hover(x, y, img) and length < 55:
-                    button.check_clicked(x, y, img)
-                    value = button.value
-                    print(value)
-                    delay_counter = 1
+                    if button.check_clicked(x, y, img):
+                        value = button.value
+                        if caps_button.is_pressed:
+                            value = button.value.capitalize()
+                        if shift_button.is_pressed:
+                            value = button.alt_value
+                        print(value)
+                        delay_counter = 1
 
     if delay_counter != 0:
         delay_counter += 1
