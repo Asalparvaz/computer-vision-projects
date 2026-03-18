@@ -61,13 +61,13 @@ class Button():
 
 
 class FuncButton():
-    def __init__(self, pos, text, width=70, height=70):
+    def __init__(self, pos, text, width=70, height=70, value=''):
         self.pos = pos
         self.width = width
         self.height = height
         self.text = text
         self.is_pressed = False
-        self.value = ''
+        self.value = value
 
     def draw(self, img):
         if not self.is_pressed:
